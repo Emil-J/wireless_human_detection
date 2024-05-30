@@ -1,0 +1,14 @@
+../Core/Src/CC1101_E07_M1101D_SMA.c:3:6:SPI_CS_WRITE	2
+../Core/Src/CC1101_E07_M1101D_SMA.c:15:6:manual_POR	2
+../Core/Src/CC1101_E07_M1101D_SMA.c:34:6:cc1101_init	2
+../Core/Src/CC1101_E07_M1101D_SMA.c:50:6:write_cc1101_config_sleep	1
+../Core/Src/CC1101_E07_M1101D_SMA.c:61:6:write_tx_cc1101_config	1
+../Core/Src/CC1101_E07_M1101D_SMA.c:93:6:write_rx_cc1101_config	1
+../Core/Src/CC1101_E07_M1101D_SMA.c:125:9:command_strobe	6
+../Core/Src/CC1101_E07_M1101D_SMA.c:157:9:read_status_reg	4
+../Core/Src/CC1101_E07_M1101D_SMA.c:179:9:transmit_burst_byte_433	1
+../Core/Src/CC1101_E07_M1101D_SMA.c:193:9:receive_burst_byte_433	4
+../Core/Src/CC1101_E07_M1101D_SMA.c:237:9:read_single_byte	2
+../Core/Src/CC1101_E07_M1101D_SMA.c:253:9:write_single_byte	2
+../Core/Src/CC1101_E07_M1101D_SMA.c:269:6:read_burst_byte	7
+../Core/Src/CC1101_E07_M1101D_SMA.c:301:6:write_burst_byte	7
