@@ -47,7 +47,7 @@ void MX_TIM2_Init(void);
 
 void delay_us(uint16_t us);
 
-void delay_25ns(uint32_t ns);
+void delay_50ns(uint32_t ns);
 
 /* USER CODE END Prototypes */
 

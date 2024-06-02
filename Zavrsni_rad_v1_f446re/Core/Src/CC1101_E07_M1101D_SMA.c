@@ -139,9 +139,8 @@ uint8_t read_status_reg(uint8_t addr, uint8_t *statusByte)
 {
 	uint8_t statusReg = addr | burst_byte_read;
 	uint8_t statusRegValue;
-	char status_message[50];
+	uint8_t txDummy = 0x01;
 	HAL_StatusTypeDef SPI_status,SPI_status1;
-	uint32_t SPIError;
 
 	if(addr >= 0x30 && addr <= 0x3D)
 	{
@@ -149,18 +148,13 @@ uint8_t read_status_reg(uint8_t addr, uint8_t *statusByte)
 		while(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_2));
 		SPI_status = HAL_SPI_TransmitReceive(&hspi2, &statusReg, statusByte, 1, HAL_MAX_DELAY);
 		delay_6_25ns(16);		//delay od 100ns
-		SPI_status1 = HAL_SPI_TransmitReceive(&hspi2, 0, &statusRegValue, 1, HAL_MAX_DELAY);
+		SPI_status1 = HAL_SPI_TransmitReceive(&hspi2, &txDummy, &statusRegValue, 1, HAL_MAX_DELAY);
 		delay_6_25ns(16);		//delay od 100ns
-		SPIError = HAL_SPI_GetError(&hspi2);
 		SPI_CS_WRITE(1);
 
 		hal_status(SPI_status);
 		hal_status(SPI_status1);
-		if (SPI_status1 != HAL_OK)
-		{
-			snprintf(status_message, sizeof(status_message), "ErrorCode: 0x%08lX\r\n",SPIError);
-			HAL_UART_Transmit(&huart2, (uint8_t*)status_message, strlen(status_message), HAL_MAX_DELAY);
-		}
+
 		return statusRegValue;
 	}
 	else
@@ -279,13 +273,14 @@ uint8_t read_single_byte(uint8_t addr, uint8_t *statusByte)
 {
 	uint8_t dataRx;
 	uint8_t txData = addr | single_byte_read;
+	uint8_t txDummy = 0x01;
 	HAL_StatusTypeDef SPI_status1,SPI_status2;
 
 	SPI_CS_WRITE(0);
 	while(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_2));
 	SPI_status1 = HAL_SPI_TransmitReceive(&hspi2, &txData, statusByte, 1, HAL_MAX_DELAY);
 	delay_6_25ns(16);		//delay od 100ns
-	SPI_status2 = HAL_SPI_TransmitReceive(&hspi2, NULL, &dataRx, 1, HAL_MAX_DELAY);
+	SPI_status2 = HAL_SPI_TransmitReceive(&hspi2, &txDummy, &dataRx, 1, HAL_MAX_DELAY);
 	SPI_CS_WRITE(1);
 	hal_status(SPI_status1);
 	hal_status(SPI_status2);
@@ -316,6 +311,7 @@ uint8_t write_single_byte(uint8_t addr, uint8_t txData)
 void read_burst_byte(uint8_t startAddr, uint8_t *statusByte, uint8_t *rxData, uint8_t len)
 {
 	char status_message[100];
+	uint8_t txDummy = 0x01;
 	HAL_StatusTypeDef SPI_status,SPI_status1;
 
 	if(startAddr <= 0x2F || startAddr == 0x3E || startAddr == 0x3F)
@@ -332,7 +328,7 @@ void read_burst_byte(uint8_t startAddr, uint8_t *statusByte, uint8_t *rxData, ui
 		}
 		for(int i=0; i < len; i++)
 		{
-			SPI_status1 = HAL_SPI_TransmitReceive(&hspi2, NULL, &rxData[i], 1, HAL_MAX_DELAY);
+			SPI_status1 = HAL_SPI_TransmitReceive(&hspi2, &txDummy, &rxData[i], 1, HAL_MAX_DELAY);
 			if(i<(len-1))
 			{
 				delay_6_25ns(16);		//delay od 100ns, cc1101 datasheet pg.30
@@ -428,5 +424,45 @@ void hal_status(HAL_StatusTypeDef SPIstatus)
 				sprintf(status_message, "HAL TIMEOUT.\r\n");
 				break;
 		}
-	HAL_UART_Transmit(&huart2, (uint8_t*)status_message, strlen(status_message), HAL_MAX_DELAY);
+	//HAL_UART_Transmit(&huart2, (uint8_t*)status_message, strlen(status_message), HAL_MAX_DELAY);
+}
+
+void hal_errorCode(uint32_t SPIerrorCode, HAL_StatusTypeDef spi_status1, HAL_StatusTypeDef spi_status2)
+{
+	if (spi_status1 != HAL_OK || spi_status2 != HAL_OK)
+	{
+		SPIerrorCode = HAL_SPI_GetError(&hspi2);
+		char status_message[50]; // Adjust size as necessary
+
+		// Handle specific errors
+		switch(SPIerrorCode)
+		{
+			case HAL_SPI_ERROR_NONE:
+				snprintf(status_message, sizeof(status_message), "No error\r\n");
+				break;
+			case HAL_SPI_ERROR_MODF:
+				snprintf(status_message, sizeof(status_message), "Mode Fault error\r\n");
+				break;
+			case HAL_SPI_ERROR_CRC:
+				snprintf(status_message, sizeof(status_message), "CRC error\r\n");
+				break;
+			case HAL_SPI_ERROR_OVR:
+				snprintf(status_message, sizeof(status_message), "Overrun error\r\n");
+				break;
+			case HAL_SPI_ERROR_FRE:
+				snprintf(status_message, sizeof(status_message), "Frame error\r\n");
+				break;
+			case HAL_SPI_ERROR_DMA:
+				snprintf(status_message, sizeof(status_message), "DMA transfer error\r\n");
+				break;
+			case HAL_SPI_ERROR_FLAG:
+				snprintf(status_message, sizeof(status_message), "Flag error: RXNE, TXE, or BSY\r\n");
+				break;
+			case HAL_SPI_ERROR_ABORT:
+				snprintf(status_message, sizeof(status_message), "Error during SPI Abort procedure\r\n");
+				break;
+		}
+		HAL_UART_Transmit(&huart2, (uint8_t*)status_message, strlen(status_message), HAL_MAX_DELAY);
+		HAL_Delay(2500);
+	}
 }

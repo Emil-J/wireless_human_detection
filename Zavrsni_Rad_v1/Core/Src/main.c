@@ -102,7 +102,7 @@ int main(void)
   char aTxBuffer[] = "ovdje1\r\n";
   HAL_UART_Transmit(&huart2, (uint8_t*)aTxBuffer, strlen(aTxBuffer), HAL_MAX_DELAY);
   manual_POR();
-  cc1101_init();
+  cc1101_init(1);
 
   uint8_t status;
   uint8_t TXBytesStatus;

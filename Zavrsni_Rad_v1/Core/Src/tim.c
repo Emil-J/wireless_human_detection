@@ -172,7 +172,7 @@ void delay_us(uint16_t us)			// Zbog clock postavki svaki count up je 1us
 	while(__HAL_TIM_GET_COUNTER(&htim1) < us);	// Cekaj dok se izbroji do te vrijednosti
 }
 
-void delay_25ns(uint32_t ns)		// Zbog clock postavki svaki count up je 25ns
+void delay_50ns(uint32_t ns)		// Zbog clock postavki svaki count up je 25ns
 {
 	__HAL_TIM_SET_COUNTER(&htim2,0);			// Postavi counter vrijednost na 0
 	while(__HAL_TIM_GET_COUNTER(&htim2) < ns);	// Cekaj dok se izbroji do te vrijednosti
