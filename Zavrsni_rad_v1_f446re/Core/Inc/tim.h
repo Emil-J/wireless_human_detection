@@ -34,15 +34,11 @@ extern "C" {
 
 extern TIM_HandleTypeDef htim1;
 
-extern TIM_HandleTypeDef htim2;
-
 /* USER CODE BEGIN Private defines */
-void delay_us(uint16_t us);
-void delay_25ns(uint32_t ns);
+void delay_6_25ns(uint16_t ns);
 /* USER CODE END Private defines */
 
 void MX_TIM1_Init(void);
-void MX_TIM2_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 

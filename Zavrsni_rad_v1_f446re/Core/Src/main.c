@@ -91,16 +91,15 @@ int main(void)
   MX_GPIO_Init();
   MX_SPI2_Init();
   MX_TIM1_Init();
-  MX_TIM2_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start(&htim1);
-  HAL_TIM_Base_Start(&htim2);
 
 //  uint8_t cnt = 0;
-  uint8_t rxData[32];
+  uint8_t rxData[64];
   uint8_t status = 0x77;
   uint8_t RXBytesStatus;
+  uint8_t numRXbytes;
   char serialStatus[50];
   char aTxBuffer[] = "ovdje1\r\n";
   HAL_UART_Transmit(&huart2, (uint8_t*)aTxBuffer, strlen(aTxBuffer), HAL_MAX_DELAY);
@@ -123,20 +122,24 @@ int main(void)
 	  snprintf(serialStatus, sizeof(serialStatus), "RXBYTES_before: 0x%02X\r\n", RXBytesStatus);
 	  HAL_UART_Transmit(&huart2, (uint8_t*)serialStatus, strlen(serialStatus), HAL_MAX_DELAY);
 
-	  receive_burst_byte_433(rxData);
+	  for(int i=0; i < 64; i++)
+	  {
+		  rxData[i]=0;
+	  }
+
+	  numRXbytes = receive_burst_byte_433(rxData);
+
+	  for(int i=0; i < 64; i++)
+	  {
+		  sprintf(serialStatus, "RXDATA[%d]: 0x%02X\r\n", i,rxData[i]);
+		  HAL_UART_Transmit(&huart2, (uint8_t*)serialStatus, strlen(serialStatus), HAL_MAX_DELAY);
+	  }
 
 	  RXBytesStatus = read_status_reg(RXBYTES, &status);
 	  snprintf(serialStatus, sizeof(serialStatus), "RXBYTES_after: 0x%02X\r\n", RXBytesStatus);
 	  HAL_UART_Transmit(&huart2, (uint8_t*)serialStatus, strlen(serialStatus), HAL_MAX_DELAY);
 
-//	  cnt++;
-//	  if((rxData[1] != 0) & (cnt>2))
-//	  {
-//		  for(int i=0; i < 32; i++)
-//		  {
-//			  rxData[i]=0;
-//		  }
-//	  }
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -156,7 +159,7 @@ void SystemClock_Config(void)
   /** Configure the main internal regulator output voltage
   */
   __HAL_RCC_PWR_CLK_ENABLE();
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
@@ -167,7 +170,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 100;
+  RCC_OscInitStruct.PLL.PLLN = 160;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 2;
   RCC_OscInitStruct.PLL.PLLR = 2;
@@ -182,10 +185,10 @@ void SystemClock_Config(void)
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV8;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
   {
     Error_Handler();
   }

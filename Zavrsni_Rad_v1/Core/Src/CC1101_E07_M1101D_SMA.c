@@ -58,6 +58,7 @@ void write_cc1101_config()
 	write_single_byte(FIFOTHR, CC1101_POSTAVKA_FIFOTHR);
 	write_single_byte(PKTLEN, CC1101_POSTAVKA_PKTLEN);
 	write_single_byte(PKTCTRL0, CC1101_POSTAVKA_PKTCTRL0);
+	write_single_byte(ADDR, CC1101_POSTAVKA_ADDR);
 	write_single_byte(FSCTRL1, CC1101_POSTAVKA_FSCTRL1);
 	write_single_byte(FREQ2, CC1101_POSTAVKA_FREQ2);
 	write_single_byte(FREQ1, CC1101_POSTAVKA_FREQ1);
@@ -74,9 +75,6 @@ void write_cc1101_config()
 	write_single_byte(FSCAL2, CC1101_POSTAVKA_FSCAL2);
 	write_single_byte(FSCAL1, CC1101_POSTAVKA_FSCAL1);
 	write_single_byte(FSCAL0, CC1101_POSTAVKA_FSCAL0);
-	write_single_byte(FSTEST, CC1101_POSTAVKA_FSTEST);
-	write_single_byte(PTEST, CC1101_POSTAVKA_PTEST);
-	write_single_byte(AGCTEST, CC1101_POSTAVKA_AGCTEST);
 	write_single_byte(TEST2, CC1101_POSTAVKA_TEST2);
 	write_single_byte(TEST1, CC1101_POSTAVKA_TEST1);
 	write_single_byte(TEST0, CC1101_POSTAVKA_TEST0);
@@ -158,7 +156,7 @@ uint8_t transmit_burst_byte_433()	// Čovjek je prisutan
 	mask = statusByte & mask;
 	if(mask == 0x70)
 	{
-		statusByte = command_strobe(SFRX);
+		statusByte = command_strobe(SFTX);
 	}
 	return statusByte;
 }

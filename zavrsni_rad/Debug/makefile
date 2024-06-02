@@ -61,8 +61,8 @@ all: main-build
 main-build: zavrsni_rad.elf secondary-outputs
 
 # Tool invocations
-zavrsni_rad.elf zavrsni_rad.map: $(OBJS) $(USER_OBJS) C:\Users\Emil\Desktop\ZAVRŠNI\zavrsni_rad\STM32L476RGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "zavrsni_rad.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Emil\Desktop\ZAVRŠNI\zavrsni_rad\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="zavrsni_rad.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+zavrsni_rad.elf zavrsni_rad.map: $(OBJS) $(USER_OBJS) C:\Users\Emil\Desktop\ZAVRSNI\wireless_human_detection\zavrsni_rad\STM32L476RGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "zavrsni_rad.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Emil\Desktop\ZAVRSNI\wireless_human_detection\zavrsni_rad\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="zavrsni_rad.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

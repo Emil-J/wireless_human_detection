@@ -60,8 +60,8 @@ all: main-build
 main-build: Zavrsni_rad_v1_f446re.elf secondary-outputs
 
 # Tool invocations
-Zavrsni_rad_v1_f446re.elf Zavrsni_rad_v1_f446re.map: $(OBJS) $(USER_OBJS) C:\Users\Emil\Desktop\ZAVRSNI\Zavrsni_rad_v1_f446re\STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Zavrsni_rad_v1_f446re.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Emil\Desktop\ZAVRSNI\Zavrsni_rad_v1_f446re\STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Zavrsni_rad_v1_f446re.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Zavrsni_rad_v1_f446re.elf Zavrsni_rad_v1_f446re.map: $(OBJS) $(USER_OBJS) C:\Users\Emil\Desktop\ZAVRSNI\wireless_human_detection\Zavrsni_rad_v1_f446re\STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "Zavrsni_rad_v1_f446re.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Emil\Desktop\ZAVRSNI\wireless_human_detection\Zavrsni_rad_v1_f446re\STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Zavrsni_rad_v1_f446re.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

@@ -68,18 +68,18 @@
 
 #define CC1101_POSTAVKA_IOCFG0     0x06
 #define CC1101_POSTAVKA_FIFOTHR    0x47
-#define CC1101_POSTAVKA_PKTLEN     0x04
-#define CC1101_POSTAVKA_PKTCTRL1   0x0D
+#define CC1101_POSTAVKA_PKTLEN     0x05
+#define CC1101_POSTAVKA_PKTCTRL1   0x05
 #define CC1101_POSTAVKA_PKTCTRL0   0x44
 #define CC1101_POSTAVKA_ADDR       0x11
 #define CC1101_POSTAVKA_FSCTRL1    0x06
 #define CC1101_POSTAVKA_FREQ2      0x10
-#define CC1101_POSTAVKA_FREQ1      0xB0
-#define CC1101_POSTAVKA_FREQ0      0x71
+#define CC1101_POSTAVKA_FREQ1      0xA7
+#define CC1101_POSTAVKA_FREQ0      0x62
 #define CC1101_POSTAVKA_MDMCFG4    0xF5
 #define CC1101_POSTAVKA_MDMCFG3    0x83
-#define CC1101_POSTAVKA_MDMCFG2    0x11
-#define CC1101_POSTAVKA_MDMCFG1    0xA2
+#define CC1101_POSTAVKA_MDMCFG2    0x91
+#define CC1101_POSTAVKA_MDMCFG1    0x22
 #define CC1101_POSTAVKA_DEVIATN    0x15
 #define CC1101_POSTAVKA_MCSM0      0x18
 #define CC1101_POSTAVKA_FOCCFG     0x16
@@ -225,5 +225,7 @@ uint8_t write_single_byte(uint8_t addr, uint8_t data);
 void read_burst_byte(uint8_t startAddr, uint8_t *statusByte, uint8_t *rxData, uint8_t len);
 
 void write_burst_byte(uint8_t startAddr, uint8_t *statusByte, uint8_t *txData, uint8_t len);
+
+void hal_status(HAL_StatusTypeDef SPIstatus);
 
 #endif
