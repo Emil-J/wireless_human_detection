@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "i2c.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -25,8 +26,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "LCD1602.h"
 #include "CC1101_E07_M1101D_SMA.h"
 #include <string.h>
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -92,8 +95,11 @@ int main(void)
   MX_SPI2_Init();
   MX_TIM1_Init();
   MX_USART2_UART_Init();
+  MX_TIM2_Init();
+  MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start(&htim1);
+  HAL_TIM_Base_Start(&htim2);
 
 //  uint8_t cnt = 0;
   uint8_t rxData[64];
@@ -101,12 +107,13 @@ int main(void)
   uint8_t RXBytesStatus;
   uint8_t numRXbytes;
   char serialStatus[50];
-  char aTxBuffer[] = "ovdje1\r\n";
-  HAL_UART_Transmit(&huart2, (uint8_t*)aTxBuffer, strlen(aTxBuffer), HAL_MAX_DELAY);
-  manual_POR();
-  cc1101_init(0);
+//  char aTxBuffer[] = "ovdje1\r\n";
+//  HAL_UART_Transmit(&huart2, (uint8_t*)aTxBuffer, strlen(aTxBuffer), HAL_MAX_DELAY);
+//  manual_POR();
+//  cc1101_init(0);
+  HD44780_Init(2);
 
-  status = command_strobe(SNOP);
+//  status = command_strobe(SNOP);
   snprintf(serialStatus, sizeof(serialStatus), "0x%02X\r\n", status);
   HAL_UART_Transmit(&huart2, (uint8_t*)serialStatus, strlen(serialStatus), HAL_MAX_DELAY);
   /* USER CODE END 2 */
@@ -117,27 +124,43 @@ int main(void)
   {
 //	  char aTxBuffer[32];
 //	  HAL_UART_Transmit(&huart2, (uint8_t*)aTxBuffer, strlen(aTxBuffer), HAL_MAX_DELAY);
-	  HAL_Delay(2000);
-	  RXBytesStatus = read_status_reg(RXBYTES, &status);
-	  snprintf(serialStatus, sizeof(serialStatus), "RXBYTES_before: 0x%02X\r\n", RXBytesStatus);
-	  HAL_UART_Transmit(&huart2, (uint8_t*)serialStatus, strlen(serialStatus), HAL_MAX_DELAY);
-
-	  for(int i=0; i < 64; i++)
-	  {
-		  rxData[i]=0;
-	  }
-
-	  numRXbytes = receive_burst_byte_433(rxData);
-
-	  for(int i=0; i < 64; i++)
-	  {
-		  sprintf(serialStatus, "RXDATA[%d]: 0x%02X\r\n", i,rxData[i]);
-		  HAL_UART_Transmit(&huart2, (uint8_t*)serialStatus, strlen(serialStatus), HAL_MAX_DELAY);
-	  }
-
-	  RXBytesStatus = read_status_reg(RXBYTES, &status);
-	  snprintf(serialStatus, sizeof(serialStatus), "RXBYTES_after: 0x%02X\r\n", RXBytesStatus);
-	  HAL_UART_Transmit(&huart2, (uint8_t*)serialStatus, strlen(serialStatus), HAL_MAX_DELAY);
+//	  HD44780_Clear();
+//	  HD44780_NoDisplay();
+//	  HD44780_Cursor();
+//	  HD44780_SetCursor(0,0);
+//	  HD44780_PrintStr("Dobrodosli doma. ");
+//	  HD44780_Display();
+//	  HAL_Delay(1000);
+//	  RXBytesStatus = read_status_reg(RXBYTES, &status);
+//	  snprintf(serialStatus, sizeof(serialStatus), "RXBYTES_before: 0x%02X\r\n", RXBytesStatus);
+//	  HAL_UART_Transmit(&huart2, (uint8_t*)serialStatus, strlen(serialStatus), HAL_MAX_DELAY);
+//	  delay_us(1000);
+//	  delay_us(100);
+//	  delay_us(40);
+//	  delay_us(10);
+//	  delay_us(1);
+//	  HAL_Delay(1000);
+//
+//	  RXBytesStatus = read_single_byte(ADDR, &status);
+//	  snprintf(serialStatus, sizeof(serialStatus), "RXBYTES_before: 0x%02X\r\n", RXBytesStatus);
+//	  HAL_UART_Transmit(&huart2, (uint8_t*)serialStatus, strlen(serialStatus), HAL_MAX_DELAY);
+//
+//	  for(int i=0; i < 64; i++)
+//	  {
+//		  rxData[i]=0;
+//	  }
+//
+//	  numRXbytes = receive_burst_byte_433(rxData);
+//
+//	  for(int i=0; i < 64; i++)
+//	  {
+//		  sprintf(serialStatus, "RXDATA[%d]: 0x%02X\r\n", i,rxData[i]);
+//		  HAL_UART_Transmit(&huart2, (uint8_t*)serialStatus, strlen(serialStatus), HAL_MAX_DELAY);
+//	  }
+//
+//	  RXBytesStatus = read_status_reg(RXBYTES, &status);
+//	  snprintf(serialStatus, sizeof(serialStatus), "RXBYTES_after: 0x%02X\r\n", RXBytesStatus);
+//	  HAL_UART_Transmit(&huart2, (uint8_t*)serialStatus, strlen(serialStatus), HAL_MAX_DELAY);
 
 
     /* USER CODE END WHILE */

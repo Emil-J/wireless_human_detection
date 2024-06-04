@@ -4,7 +4,7 @@
 ../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c:549:13:HAL_SPI_MspDeInit	1
 ../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c:821:19:HAL_SPI_Transmit	27
 ../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c:1011:19:HAL_SPI_Receive	23
-../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c:1256:19:HAL_SPI_TransmitReceive	43
+../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c:1256:19:HAL_SPI_TransmitReceive	40
 ../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c:1602:19:HAL_SPI_Transmit_IT	8
 ../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c:1688:19:HAL_SPI_Receive_IT	10
 ../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c:1797:19:HAL_SPI_TransmitReceive_IT	14

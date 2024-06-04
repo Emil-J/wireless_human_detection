@@ -98,13 +98,13 @@ int main(void)
   HAL_TIM_Base_Start(&htim1);
   HAL_TIM_Base_Start(&htim2);
 
-  char serialStatus[50];
+  char serialStatus[200];
   char aTxBuffer[] = "ovdje1\r\n";
   HAL_UART_Transmit(&huart2, (uint8_t*)aTxBuffer, strlen(aTxBuffer), HAL_MAX_DELAY);
   manual_POR();
   cc1101_init(1);
 
-  uint8_t status;
+  uint8_t status,status1;
   uint8_t TXBytesStatus;
   status = command_strobe(SNOP);
   snprintf(serialStatus, sizeof(serialStatus), "main: 0x%02X\r\n", status);
@@ -117,19 +117,46 @@ int main(void)
   {
 //	  char aTxBuffer[] = "ovdje2\r\n";
 //	  HAL_UART_Transmit(&huart2, (uint8_t*)aTxBuffer, strlen(aTxBuffer), HAL_MAX_DELAY);
+//	  HAL_Delay(5000);
+//
+//	  TXBytesStatus = read_single_byte(IOCFG0, &status1);
+//	  snprintf(serialStatus, sizeof(serialStatus), "IOCFG0: 0x%02X\r\n", TXBytesStatus);
+//	  HAL_UART_Transmit(&huart2, (uint8_t*)serialStatus, strlen(serialStatus), HAL_MAX_DELAY);
+//
+//	  snprintf(serialStatus, sizeof(serialStatus), "ChipStatus, txbytes B: 0x%02X\r\n", status1);
+//	  HAL_UART_Transmit(&huart2, (uint8_t*)serialStatus, strlen(serialStatus), HAL_MAX_DELAY);
+//
+//	  TXBytesStatus = read_single_byte(FREQ2, &status1);
+//	  snprintf(serialStatus, sizeof(serialStatus), "FREQ2: 0x%02X\r\n", TXBytesStatus);
+//	  HAL_UART_Transmit(&huart2, (uint8_t*)serialStatus, strlen(serialStatus), HAL_MAX_DELAY);
+//
+//	  snprintf(serialStatus, sizeof(serialStatus), "Chip status: 0x%02X\r\n", status1);
+//	  HAL_UART_Transmit(&huart2, (uint8_t*)serialStatus, strlen(serialStatus), HAL_MAX_DELAY);
+//
+//	  HAL_Delay(2000);
+//
+//	  TXBytesStatus = read_single_byte(FREQ1, &status1);
+//	  snprintf(serialStatus, sizeof(serialStatus), "FREQ1: 0x%02X\r\n", TXBytesStatus);
+//	  HAL_UART_Transmit(&huart2, (uint8_t*)serialStatus, strlen(serialStatus), HAL_MAX_DELAY);
+//
+//	  snprintf(serialStatus, sizeof(serialStatus), "Chip status: 0x%02X\r\n", status1);
+//	  HAL_UART_Transmit(&huart2, (uint8_t*)serialStatus, strlen(serialStatus), HAL_MAX_DELAY);
+
 	  HAL_Delay(2000);
-	  TXBytesStatus = read_status_reg(TXBYTES, &status);
-	  snprintf(serialStatus, sizeof(serialStatus), "TXBYTES: 0x%02X\r\n", TXBytesStatus);
-	  HAL_UART_Transmit(&huart2, (uint8_t*)serialStatus, strlen(serialStatus), HAL_MAX_DELAY);
 
-	  status = transmit_burst_byte_433();
+	  //transmit_burst_byte_433();
+	  if(HAL_GPIO_ReadPin(HD_Out_GPIO_Port, HD_Out_Pin))
+	  {
 
-	  TXBytesStatus = read_status_reg(TXBYTES, &status);
-	  snprintf(serialStatus, sizeof(serialStatus), "TXBYTES: 0x%02X\r\n", TXBytesStatus);
-	  HAL_UART_Transmit(&huart2, (uint8_t*)serialStatus, strlen(serialStatus), HAL_MAX_DELAY);
+		  //TXBytesStatus = read_status_reg(TXBYTES, &status1);
+		  snprintf(serialStatus, sizeof(serialStatus), "Human detected.");
+		  HAL_UART_Transmit(&huart2, (uint8_t*)serialStatus, strlen(serialStatus), HAL_MAX_DELAY);
 
-	  snprintf(serialStatus, sizeof(serialStatus), "loop: 0x%02X\r\n", status);
-	  HAL_UART_Transmit(&huart2, (uint8_t*)serialStatus, strlen(serialStatus), HAL_MAX_DELAY);
+	  }
+//
+//	  snprintf(serialStatus, sizeof(serialStatus), "ChipStatus, txbytes A: 0x%02X\r\n", status1);
+//	  HAL_UART_Transmit(&huart2, (uint8_t*)serialStatus, strlen(serialStatus), HAL_MAX_DELAY);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

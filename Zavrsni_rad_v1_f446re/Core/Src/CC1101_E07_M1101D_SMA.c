@@ -18,9 +18,9 @@ void manual_POR()
 	char serialStatus[10];
 
 	SPI_CS_WRITE(0);
-	delay_6_25ns(160);
+	delay_us(1);
 	SPI_CS_WRITE(1);
-	delay_6_25ns(6560);
+	delay_us(41);
 
 	SPI_CS_WRITE(0);
 	while(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_2));
@@ -96,7 +96,9 @@ void write_rx_cc1101_config()
 	write_single_byte(IOCFG0, CC1101_POSTAVKA_IOCFG0);
 	write_single_byte(FIFOTHR, CC1101_POSTAVKA_FIFOTHR);
 	write_single_byte(PKTLEN, CC1101_POSTAVKA_PKTLEN);
+	write_single_byte(PKTCTRL1, CC1101_POSTAVKA_PKTCTRL1);
 	write_single_byte(PKTCTRL0, CC1101_POSTAVKA_PKTCTRL0);
+	write_single_byte(ADDR, CC1101_POSTAVKA_ADDR);
 	write_single_byte(FSCTRL1, CC1101_POSTAVKA_FSCTRL1);
 	write_single_byte(FREQ2, CC1101_POSTAVKA_FREQ2);
 	write_single_byte(FREQ1, CC1101_POSTAVKA_FREQ1);
@@ -112,6 +114,9 @@ void write_rx_cc1101_config()
 	write_single_byte(FSCAL2, CC1101_POSTAVKA_FSCAL2);
 	write_single_byte(FSCAL1, CC1101_POSTAVKA_FSCAL1);
 	write_single_byte(FSCAL0, CC1101_POSTAVKA_FSCAL0);
+	//	fstest
+	//	ptest
+	//	agctest
 	write_single_byte(TEST2, CC1101_POSTAVKA_TEST2);
 	write_single_byte(TEST1, CC1101_POSTAVKA_TEST1);
 	write_single_byte(TEST0, CC1101_POSTAVKA_TEST0);
@@ -120,8 +125,7 @@ void write_rx_cc1101_config()
 
 uint8_t command_strobe(uint8_t addr)
 {
-	delay_6_25ns(65534);					// Postavljen delay na pocetak, zbog mogucih krivih podataka od prijasnjeg strobe-a
-	delay_6_25ns(65534);					// Sveukupno 816us
+	delay_us(1000);					// Postavljen delay na pocetak, zbog mogucih krivih podataka od prijasnjeg strobe-a
 	HAL_StatusTypeDef SPI_status;
 	uint8_t status;
 
@@ -172,8 +176,7 @@ uint8_t transmit_burst_byte_433()	// Čovjek je prisutan
 	command_strobe(SFTX);			// Flush TX FIFO
 	write_burst_byte(TX_FIFO, &statusByte, txData, len);	//Napuni TX FIFO
 	command_strobe(STX);			// Prebaci iz IDLE stanja u TX stanje
-	delay_6_25ns(65535);					// Vrijeme potrebno za tranziciju IDLE->TX + TX->IDLE
-	delay_6_25ns(65535);					// Sveukupno 816us
+	delay_us(1000);			// Vrijeme potrebno za tranziciju IDLE->RX + RX->IDLE
 
 	return statusByte;
 }
@@ -208,7 +211,9 @@ uint8_t receive_burst_byte_433(uint8_t *rxData)
 	//HAL_Delay(2000);				// Pošto je brzina 1.2kBaud, cca. 5 sekundi treba za +/-10 byte-a podataka.
 
 	command_strobe(SRX);			// Prebaci iz IDLE stanja u RX stanje
-	delay_6_25ns(2000);					// Vrijeme potrebno za tranziciju IDLE->RX + RX->IDLE
+	delay_us(1000);			// Vrijeme potrebno za tranziciju IDLE->RX + RX->IDLE
+	while(!HAL_GPIO_ReadPin(GDO0_GPIO_Port, GDO0_Pin));		//Pričekaj do slanja sync word-a
+	while(HAL_GPIO_ReadPin(GDO0_GPIO_Port, GDO0_Pin));		// Pričekaj do kraja slanja payload-a
 
 	while(num_rxBytes < 5)
 	{
@@ -224,7 +229,7 @@ uint8_t receive_burst_byte_433(uint8_t *rxData)
 		if(num_rxBytes>=2)
 		{
 			read_burst_byte(RX_FIFO, &statusByte, rxData, num_rxBytes);	//Napuni TX FIFO
-			delay_6_25ns(1000);					// Vrijeme potrebno za tranziciju IDLE->RX + RX->IDLE
+			delay_us(1000);					// Vrijeme potrebno za tranziciju IDLE->RX + RX->IDLE
 
 		}
 	}

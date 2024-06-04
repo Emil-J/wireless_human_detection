@@ -18,7 +18,7 @@ void manual_POR()
 	char serialStatus[10];
 
 	SPI_CS_WRITE(0);
-	delay_50ns(2);
+	delay_us(1);
 	SPI_CS_WRITE(1);
 	delay_us(41);
 
@@ -58,13 +58,15 @@ void write_cc1101_config_sleep()
 }
 
 
-void write_tx_cc1101_config()
+void write_tx_cc1101_config()	//svih 26 postavki, osim 1 u komentarima
 {
 	write_single_byte(PATABLE, 0x60);
 	write_single_byte(IOCFG0, CC1101_POSTAVKA_IOCFG0);
 	write_single_byte(FIFOTHR, CC1101_POSTAVKA_FIFOTHR);
 	write_single_byte(PKTLEN, CC1101_POSTAVKA_PKTLEN);
+	//	PKTCTRL1
 	write_single_byte(PKTCTRL0, CC1101_POSTAVKA_PKTCTRL0);
+	write_single_byte(ADDR, CC1101_POSTAVKA_ADDR);
 	write_single_byte(FSCTRL1, CC1101_POSTAVKA_FSCTRL1);
 	write_single_byte(FREQ2, CC1101_POSTAVKA_FREQ2);
 	write_single_byte(FREQ1, CC1101_POSTAVKA_FREQ1);
@@ -72,7 +74,6 @@ void write_tx_cc1101_config()
 	write_single_byte(MDMCFG4, CC1101_POSTAVKA_MDMCFG4);
 	write_single_byte(MDMCFG3, CC1101_POSTAVKA_MDMCFG3);
 	write_single_byte(MDMCFG2, CC1101_POSTAVKA_MDMCFG2);
-	write_single_byte(MDMCFG1, CC1101_POSTAVKA_MDMCFG1);
 	write_single_byte(DEVIATN, CC1101_POSTAVKA_DEVIATN);
 	write_single_byte(MCSM0, CC1101_POSTAVKA_MCSM0);
 	write_single_byte(FOCCFG, CC1101_POSTAVKA_FOCCFG);
@@ -90,13 +91,15 @@ void write_tx_cc1101_config()
 
 }
 
-void write_rx_cc1101_config()
+void write_rx_cc1101_config()	//svih 24 postavki, osim 3 ovih u komentarima
 {
 	write_single_byte(PATABLE, 0x60);
 	write_single_byte(IOCFG0, CC1101_POSTAVKA_IOCFG0);
 	write_single_byte(FIFOTHR, CC1101_POSTAVKA_FIFOTHR);
 	write_single_byte(PKTLEN, CC1101_POSTAVKA_PKTLEN);
+	write_single_byte(PKTCTRL1, CC1101_POSTAVKA_PKTCTRL1);
 	write_single_byte(PKTCTRL0, CC1101_POSTAVKA_PKTCTRL0);
+	write_single_byte(ADDR, CC1101_POSTAVKA_ADDR);
 	write_single_byte(FSCTRL1, CC1101_POSTAVKA_FSCTRL1);
 	write_single_byte(FREQ2, CC1101_POSTAVKA_FREQ2);
 	write_single_byte(FREQ1, CC1101_POSTAVKA_FREQ1);
@@ -112,6 +115,9 @@ void write_rx_cc1101_config()
 	write_single_byte(FSCAL2, CC1101_POSTAVKA_FSCAL2);
 	write_single_byte(FSCAL1, CC1101_POSTAVKA_FSCAL1);
 	write_single_byte(FSCAL0, CC1101_POSTAVKA_FSCAL0);
+	//	fstest
+	//	ptest
+	//	agctest
 	write_single_byte(TEST2, CC1101_POSTAVKA_TEST2);
 	write_single_byte(TEST1, CC1101_POSTAVKA_TEST1);
 	write_single_byte(TEST0, CC1101_POSTAVKA_TEST0);
@@ -126,7 +132,7 @@ uint8_t command_strobe(uint8_t addr)
 
 	SPI_CS_WRITE(0);
 	while(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_2));
-	SPI_status = HAL_SPI_TransmitReceive(&hspi2, &addr, &status, 1, HAL_MAX_DELAY);
+	SPI_status = HAL_SPI_TransmitReceive(&hspi2, &addr, &status, 1, 0xFFFF);
 	SPI_CS_WRITE(1);
 	hal_status(SPI_status);
 
@@ -138,17 +144,16 @@ uint8_t read_status_reg(uint8_t addr, uint8_t *statusByte)
 {
 	uint8_t statusReg = addr | burst_byte_read;
 	uint8_t statusRegValue;
-	uint8_t txDummy = 0x01;
+	uint8_t txDummy = 1;
 	HAL_StatusTypeDef SPI_status,SPI_status1;
 
 	if(addr >= 0x30 && addr <= 0x3D)
 	{
 		SPI_CS_WRITE(0);
 		while(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_2));
-		SPI_status = HAL_SPI_TransmitReceive(&hspi2, &statusReg, statusByte, 1, HAL_MAX_DELAY);
-		delay_50ns(2);		//delay od 100ns
-		SPI_status1 = HAL_SPI_TransmitReceive(&hspi2, &txDummy, &statusRegValue, 1, HAL_MAX_DELAY);
-		delay_50ns(2);		//delay od 100ns
+		SPI_status = HAL_SPI_TransmitReceive(&hspi2, &statusReg, statusByte, 1, 0xFFFF);
+		delay_25ns(4);		//delay od 100ns
+		SPI_status1 = HAL_SPI_TransmitReceive(&hspi2, &txDummy, &statusRegValue, 1, 0xFFFF);
 		SPI_CS_WRITE(1);
 
 		hal_status(SPI_status);
@@ -166,12 +171,58 @@ uint8_t transmit_burst_byte_433()	// Čovjek je prisutan
 {
 	uint8_t TX_FIFO = 0x3F;
 	uint8_t len = 2;
-	uint8_t statusByte;
+	uint8_t statusByte,statusByte1,statusByte2,statusByte3,statusByte4;
+	uint8_t TXregByte,marcstate,marcstate1,marcstate2;
+	char status_message[100];
 	uint8_t txData[2] = {0x11, 0xFF};
+
+	command_strobe(SIDLE);			// IDLE
+	HAL_Delay(1000);
 	command_strobe(SFTX);			// Flush TX FIFO
+	delay_us(2000);
+
 	write_burst_byte(TX_FIFO, &statusByte, txData, len);	//Napuni TX FIFO
+	HAL_Delay(1000);
+	TXregByte = read_status_reg(TXBYTES, &statusByte2);
 	command_strobe(STX);			// Prebaci iz IDLE stanja u TX stanje
 	delay_us(1000);			// Vrijeme potrebno za tranziciju IDLE->TX + TX->IDLE
+	while(!HAL_GPIO_ReadPin(GDO0_GPIO_Port, GDO0_Pin));		//Pričekaj do slanja sync word-a
+	while(HAL_GPIO_ReadPin(GDO0_GPIO_Port, GDO0_Pin));		// Pričekaj do kraja slanja payload-a
+
+	HAL_Delay(3500);
+	marcstate = read_status_reg(MARCSTATE, &statusByte1);
+	marcstate = marcstate & 0x1F;
+	marcstate1 = read_status_reg(MARCSTATE, &statusByte3);
+	marcstate1 = marcstate1 & 0x1F;
+	marcstate2 = read_status_reg(MARCSTATE, &statusByte4);
+	marcstate2 = marcstate2 & 0x1F;
+
+	sprintf(status_message, "StatusByte, before TX: 0x%02X\r\n", statusByte);
+	HAL_UART_Transmit(&huart2, (uint8_t*)status_message, strlen(status_message), HAL_MAX_DELAY);
+
+	sprintf(status_message, "StatusByte1, during marcstate: 0x%02X\r\n", statusByte1);
+	HAL_UART_Transmit(&huart2, (uint8_t*)status_message, strlen(status_message), HAL_MAX_DELAY);
+
+	sprintf(status_message, "MARCSTATE value: 0x%02X\r\n", marcstate);
+	HAL_UART_Transmit(&huart2, (uint8_t*)status_message, strlen(status_message), HAL_MAX_DELAY);
+
+	sprintf(status_message, "StatusByte3, during marcstate: 0x%02X\r\n", statusByte3);
+	HAL_UART_Transmit(&huart2, (uint8_t*)status_message, strlen(status_message), HAL_MAX_DELAY);
+
+	sprintf(status_message, "MARCSTATE1 value: 0x%02X\r\n", marcstate1);
+	HAL_UART_Transmit(&huart2, (uint8_t*)status_message, strlen(status_message), HAL_MAX_DELAY);
+
+	sprintf(status_message, "StatusByte4, during marcstate: 0x%02X\r\n", statusByte4);
+	HAL_UART_Transmit(&huart2, (uint8_t*)status_message, strlen(status_message), HAL_MAX_DELAY);
+
+	sprintf(status_message, "MARCSTATE2 value: 0x%02X\r\n", marcstate2);
+	HAL_UART_Transmit(&huart2, (uint8_t*)status_message, strlen(status_message), HAL_MAX_DELAY);
+
+	sprintf(status_message, "TXStatusByte2, after TX: 0x%02X\r\n", statusByte2);
+	HAL_UART_Transmit(&huart2, (uint8_t*)status_message, strlen(status_message), HAL_MAX_DELAY);
+
+	sprintf(status_message, "TXregByte, after FIFO: 0x%02X\r\n", TXregByte);
+	HAL_UART_Transmit(&huart2, (uint8_t*)status_message, strlen(status_message), HAL_MAX_DELAY);
 
 	return statusByte;
 }
@@ -276,9 +327,9 @@ uint8_t read_single_byte(uint8_t addr, uint8_t *statusByte)
 
 	SPI_CS_WRITE(0);
 	while(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_2));
-	SPI_status1 = HAL_SPI_TransmitReceive(&hspi2, &txData, statusByte, 1, HAL_MAX_DELAY);
-	delay_50ns(2);		//delay od 100ns
-	SPI_status2 = HAL_SPI_TransmitReceive(&hspi2, &txDummy, &dataRx, 1, HAL_MAX_DELAY);
+	SPI_status1 = HAL_SPI_TransmitReceive(&hspi2, &txData, statusByte, 1, 0xFFFF);
+	delay_25ns(4);		//delay od 100ns
+	SPI_status2 = HAL_SPI_TransmitReceive(&hspi2, &txDummy, &dataRx, 1, 0xFFFF);
 	SPI_CS_WRITE(1);
 	hal_status(SPI_status1);
 	hal_status(SPI_status2);
@@ -296,7 +347,7 @@ uint8_t write_single_byte(uint8_t addr, uint8_t txData)
 	SPI_CS_WRITE(0);
 	while(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_2));
 	SPI_status1 = HAL_SPI_TransmitReceive(&hspi2, &txAddr, &statusByte, 1, HAL_MAX_DELAY);
-	delay_50ns(2);		//delay od 100ns
+	delay_25ns(4);		//delay od 100ns
 	SPI_status2 = HAL_SPI_TransmitReceive(&hspi2, &dataTx, &statusByte, 1, HAL_MAX_DELAY);
 	SPI_CS_WRITE(1);
 
@@ -309,7 +360,7 @@ uint8_t write_single_byte(uint8_t addr, uint8_t txData)
 void read_burst_byte(uint8_t startAddr, uint8_t *statusByte, uint8_t *rxData, uint8_t len)
 {
 	char status_message[100];
-	uint8_t txDummy = 0x01;
+	uint8_t txDummy;
 	HAL_StatusTypeDef SPI_status,SPI_status1;
 
 	if(startAddr <= 0x2F || startAddr == 0x3E || startAddr == 0x3F)
@@ -318,22 +369,22 @@ void read_burst_byte(uint8_t startAddr, uint8_t *statusByte, uint8_t *rxData, ui
 
 		SPI_CS_WRITE(0);
 		while(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_2));
-		SPI_status = HAL_SPI_TransmitReceive(&hspi2, &addr, statusByte, 1, HAL_MAX_DELAY);
-		delay_50ns(2);		//delay od 100ns
+		SPI_status = HAL_SPI_TransmitReceive(&hspi2, &addr, statusByte, 1, 0xFFFF);
+		delay_25ns(4);		//delay od 100ns
 		if(len>64)
 		{
 			len=64;
 		}
 		for(int i=0; i < len; i++)
 		{
-			SPI_status1 = HAL_SPI_TransmitReceive(&hspi2, &txDummy, &rxData[i], 1, HAL_MAX_DELAY);
+			SPI_status1 = HAL_SPI_TransmitReceive(&hspi2, &txDummy, &rxData[i], 1, 0xFFFF);
 			if(i<(len-1))
 			{
-				delay_50ns(2);		//delay od 100ns, cc1101 datasheet pg.30
+				delay_25ns(4);		//delay od 100ns, cc1101 datasheet pg.30
 			}
 			else
 			{
-				delay_50ns(1);		//delay od 25ns
+				delay_25ns(1);		//delay od 25ns
 			}
 		}
 		SPI_CS_WRITE(1);
@@ -369,18 +420,18 @@ void write_burst_byte(uint8_t startAddr, uint8_t *statusByte, uint8_t *txData, u
 		uint8_t addr = startAddr | burst_byte_write;
 		SPI_CS_WRITE(0);
 		while(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_2));
-		SPI_status = HAL_SPI_TransmitReceive(&hspi2, &addr, statusByte, 1, HAL_MAX_DELAY);
-		delay_50ns(2);		//delay od 100ns, cc1101 datasheet pg.30
+		SPI_status = HAL_SPI_TransmitReceive(&hspi2, &addr, statusByte, 1, 0xFFFF);
+		delay_25ns(4);		//delay od 100ns, cc1101 datasheet pg.30
 		for(int i=0; i < len; i++)
 		{
-			SPI_status1 = HAL_SPI_TransmitReceive(&hspi2, &txData[i], statusByte, 1, HAL_MAX_DELAY);
+			SPI_status1 = HAL_SPI_TransmitReceive(&hspi2, &txData[i], statusByte, 1, 0xFFFF);
 			if(i<(len-1))
 			{
-				delay_50ns(2);		//delay od 100ns, cc1101 datasheet pg.30
+				delay_25ns(4);		//delay od 100ns, cc1101 datasheet pg.30
 			}
 			else
 			{
-				delay_50ns(1);		//delay od 25ns
+				delay_25ns(1);		//delay od 25ns
 			}
 		}
 		SPI_CS_WRITE(1);
@@ -422,7 +473,7 @@ void hal_status(HAL_StatusTypeDef SPIstatus)
 				sprintf(status_message, "HAL TIMEOUT.\r\n");
 				break;
 		}
-	//HAL_UART_Transmit(&huart2, (uint8_t*)status_message, strlen(status_message), HAL_MAX_DELAY);
+	HAL_UART_Transmit(&huart2, (uint8_t*)status_message, strlen(status_message), HAL_MAX_DELAY);
 }
 
 void hal_errorCode(uint32_t SPIerrorCode, HAL_StatusTypeDef spi_status1, HAL_StatusTypeDef spi_status2)

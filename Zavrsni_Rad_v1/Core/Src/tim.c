@@ -84,7 +84,7 @@ void MX_TIM2_Init(void)
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 2-1;
+  htim2.Init.Prescaler = 1-1;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim2.Init.Period = 4294967295;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -172,7 +172,7 @@ void delay_us(uint16_t us)			// Zbog clock postavki svaki count up je 1us
 	while(__HAL_TIM_GET_COUNTER(&htim1) < us);	// Cekaj dok se izbroji do te vrijednosti
 }
 
-void delay_50ns(uint32_t ns)		// Zbog clock postavki svaki count up je 25ns
+void delay_25ns(uint32_t ns)		// Zbog clock postavki svaki count up je 25ns
 {
 	__HAL_TIM_SET_COUNTER(&htim2,0);			// Postavi counter vrijednost na 0
 	while(__HAL_TIM_GET_COUNTER(&htim2) < ns);	// Cekaj dok se izbroji do te vrijednosti

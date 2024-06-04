@@ -3,4 +3,4 @@
 ../Core/Src/tim.c:113:6:HAL_TIM_Base_MspInit	8	static
 ../Core/Src/tim.c:140:6:HAL_TIM_Base_MspDeInit	0	static
 ../Core/Src/tim.c:169:6:delay_us	0	static
-../Core/Src/tim.c:175:6:delay_50ns	0	static
+../Core/Src/tim.c:175:6:delay_25ns	0	static
