@@ -1,0 +1,8 @@
+../Core/Src/freertos.c:207:6:StartCC1101	3
+../Core/Src/freertos.c:244:6:StartLCD	4
+../Core/Src/freertos.c:275:6:StartBUZZER	6
+../Core/Src/freertos.c:107:5:_write	5
+../Core/Src/freertos.c:122:13:configureTimerForRunTimeStats	1
+../Core/Src/freertos.c:129:22:getRunTimeCounterValue	1
+../Core/Src/freertos.c:136:6:vApplicationStackOverflowHook	1
+../Core/Src/freertos.c:149:6:MX_FREERTOS_Init	1
