@@ -256,7 +256,8 @@ void StartLCD(void *argument)
 		  status = osMessageQueueGet(myQueue01Handle, &msg, 0, 0);
 		  if((status == osOK) && (msg == 0xFF))
 		  {
-			  HD44780_Display();
+			  LCD1602_Backlight();
+			  LCD1602_Display();
 		  }
 	  }
 	  osMutexRelease(myMutex01Handle);
@@ -297,7 +298,8 @@ void StartBUZZER(void *argument)
 		  else if((status == osOK) && (msg == 0x00))
 		  {
 			  HAL_GPIO_WritePin(BUZZER_GPIO_Port, BUZZER_Pin, GPIO_PIN_RESET);
-			  HD44780_NoDisplay();
+			  LCD1602_NoBacklight();
+			  LCD1602_NoDisplay();
 		  }
 	  }
 	  osMutexRelease(myMutex01Handle);

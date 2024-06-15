@@ -105,12 +105,12 @@ int main(void)
 
   manual_POR();
   cc1101_init(0);
-  HD44780_Init(2);
-  HD44780_Clear();
-  HD44780_NoDisplay();
-  HD44780_Cursor();
-  HD44780_SetCursor(0,0);
-  HD44780_PrintStr("ENTRANCE 1 ALERT");
+  LCD1602_Init(2);
+  LCD1602_Clear();
+  LCD1602_NoDisplay();
+  LCD1602_Cursor();
+  LCD1602_SetCursor(0,0);
+  LCD1602_PrintStr("ENTRANCE 1 ALERT");
 
   /* USER CODE END 2 */
 

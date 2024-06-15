@@ -1,26 +1,20 @@
-/*
- * LCD1602.c
- *
- *  Created on: Jun 4, 2024
- *      Author: Emil
- */
 #include "LCD1602.h"
 
-uint8_t dpFunction;
-uint8_t dpControl;
-uint8_t dpMode;
-uint8_t dpRows;
-uint8_t dpBacklight;
+uint8_t configFunctionSet;
+uint8_t displayBacklight;
+uint8_t displayControl;
+uint8_t displayMode;
+uint8_t displayRows;
 
-static void SendCommand(uint8_t);
-static void SendChar(uint8_t);
-static void Send(uint8_t, uint8_t);
-static void Write4Bits(uint8_t);
-static void ExpanderWrite(uint8_t);
-static void PulseEnable(uint8_t);
+static void sendCMD(uint8_t);
+static void sendChar(uint8_t);
+static void send(uint8_t, uint8_t);
+static void write4bits(uint8_t);
+static void writeExpander(uint8_t);
+static void enPulse(uint8_t);
 
 uint8_t special1[8] = {
-		0b00000,
+        0b00000,
         0b11001,
         0b11011,
         0b00110,
@@ -31,7 +25,7 @@ uint8_t special1[8] = {
 };
 
 uint8_t special2[8] = {
-		0b11000,
+        0b11000,
         0b11000,
         0b00110,
         0b01001,
@@ -41,232 +35,149 @@ uint8_t special2[8] = {
         0b00000
 };
 
-void HD44780_Init(uint8_t rows)
+void LCD1602_Init()
 {
-	dpRows = rows;
+  configFunctionSet = LCD_4BITMODE | LCD_2LINE | LCD_5x8DOTS;
+  displayBacklight = LCD_NOBACKLIGHT;
 
-	dpBacklight = LCD_BACKLIGHT;
+  /* Wait for initialization */
+  HAL_Delay(50);
 
-	dpFunction = LCD_4BITMODE | LCD_1LINE | LCD_5x8DOTS;
+  HAL_Delay(1000);
 
-	if (dpRows > 1)
-	{
-	dpFunction |= LCD_2LINE;
-	}
-	else
-	{
-	dpFunction |= LCD_5x10DOTS;
-	}
+  /* 4bit Mode */
+  write4bits(0x03 << 4);
+  delay_us(4500);
 
-	/* Wait for initialization */
-	HAL_Delay(50);
+  write4bits(0x03 << 4);
+  delay_us(4500);
 
-	HAL_Delay(1000);
+  write4bits(0x03 << 4);
+  delay_us(4500);
 
-	/* 4bit Mode */
-	Write4Bits(0x03 << 4);
-	delay_us(4500);
+  write4bits(0x02 << 4);
+  delay_us(100);
 
-	Write4Bits(0x03 << 4);
-	delay_us(4500);
+  /* Display Control */
+  sendCMD(LCD_FUNCTIONSET | configFunctionSet);
 
-	Write4Bits(0x03 << 4);
-	delay_us(4500);
+  displayControl = LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKOFF;
+  LCD1602_Display();
+  LCD1602_Clear();
 
-	Write4Bits(0x02 << 4);
-	delay_us(100);
+  /* Display Mode */
+  displayMode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT;
+  sendCMD(LCD_ENTRYMODESET | displayMode);
+  delay_us(4500);
 
-	/* Display Control */
-	SendCommand(LCD_FUNCTIONSET | dpFunction);
-
-	dpControl = LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKOFF;
-	HD44780_Display();
-	HD44780_Clear();
-
-	/* Display Mode */
-	dpMode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT;
-	SendCommand(LCD_ENTRYMODESET | dpMode);
-	delay_us(4500);
-
-	HD44780_CreateSpecialChar(0, special1);
-	HD44780_CreateSpecialChar(1, special2);
-	ExpanderWrite(dpBacklight);
-	HAL_Delay(1000);
-	HD44780_Home();
+  LCD1602_CreateSpecialChar(0, special1);
+  LCD1602_CreateSpecialChar(1, special2);
+  writeExpander(displayBacklight);
+  HAL_Delay(1000);
+  LCD1602_Home();
 }
 
-void HD44780_Clear()
+void LCD1602_Clear()
 {
-	SendCommand(LCD_CLEARDISPLAY);
-	delay_us(2000);
+  sendCMD(LCD_CLEARDISPLAY);
+  delay_us(2000);
 }
 
-void HD44780_Home()
+void LCD1602_Home()
 {
-	SendCommand(LCD_RETURNHOME);
-	delay_us(2000);
+  sendCMD(LCD_RETURNHOME);
+  delay_us(2000);
 }
 
-void HD44780_SetCursor(uint8_t col, uint8_t row)
+void LCD1602_SetCursor(uint8_t col, uint8_t row)
 {
-	int row_offsets[] = { 0x00, 0x40, 0x14, 0x54 };
-	if (row >= dpRows)
-	{
-	row = dpRows-1;
-	}
-	SendCommand(LCD_SETDDRAMADDR | (col + row_offsets[row]));
+  int row_offsets[] = { 0x00, 0x40, 0x14, 0x54 };
+  sendCMD(LCD_SETDDRAMADDR | (col + row_offsets[row]));
 }
 
-void HD44780_NoDisplay()
+void LCD1602_NoDisplay()
 {
-	dpControl &= ~LCD_DISPLAYON;
-	SendCommand(LCD_DISPLAYCONTROL | dpControl);
+  displayControl &= LCD_DISPLAYOFF;
+  sendCMD(LCD_DISPLAYCONTROL | displayControl);
 }
 
-void HD44780_Display()
+void LCD1602_Display()
 {
-	dpControl |= LCD_DISPLAYON;
-	SendCommand(LCD_DISPLAYCONTROL | dpControl);
+  displayControl |= LCD_DISPLAYON;
+  sendCMD(LCD_DISPLAYCONTROL | displayControl);
 }
 
-void HD44780_NoCursor()
+void LCD1602_Cursor()
 {
-	dpControl &= ~LCD_CURSORON;
-	SendCommand(LCD_DISPLAYCONTROL | dpControl);
+  displayControl |= LCD_CURSORON;
+  sendCMD(LCD_DISPLAYCONTROL | displayControl);
 }
 
-void HD44780_Cursor()
+void LCD1602_CreateSpecialChar(uint8_t location, uint8_t charmap[])
 {
-	dpControl |= LCD_CURSORON;
-	SendCommand(LCD_DISPLAYCONTROL | dpControl);
+  location &= 0x7;
+  sendCMD(LCD_SETCGRAMADDR | (location << 3));
+  for (int i=0; i<8; i++)
+  {
+    sendChar(charmap[i]);
+  }
 }
 
-void HD44780_NoBlink()
+void LCD1602_Backlight()
 {
-	dpControl &= ~LCD_BLINKON;
-	SendCommand(LCD_DISPLAYCONTROL | dpControl);
+	displayBacklight = LCD_BACKLIGHT;
+	writeExpander(displayBacklight);
 }
 
-void HD44780_Blink()
+void LCD1602_NoBacklight()
 {
-	dpControl |= LCD_BLINKON;
-	SendCommand(LCD_DISPLAYCONTROL | dpControl);
+	displayBacklight = LCD_NOBACKLIGHT;
+	writeExpander(displayBacklight);
 }
 
-void HD44780_ScrollDisplayLeft(void)
+void LCD1602_PrintStr(const char c[])
 {
-	SendCommand(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVELEFT);
+  while(*c && *c != '0') sendChar(*c++);
 }
 
-void HD44780_ScrollDisplayRight(void)
+static void sendCMD(uint8_t cmd)
 {
-	SendCommand(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVERIGHT);
+  send(cmd, 0);
 }
 
-void HD44780_LeftToRight(void)
+static void sendChar(uint8_t ch)
 {
-	dpMode |= LCD_ENTRYLEFT;
-	SendCommand(LCD_ENTRYMODESET | dpMode);
+  send(ch, RS);
 }
 
-void HD44780_RightToLeft(void)
+static void send(uint8_t value, uint8_t mode)
 {
-	dpMode &= ~LCD_ENTRYLEFT;
-	SendCommand(LCD_ENTRYMODESET | dpMode);
+  uint8_t highnib = value & 0xF0;
+  uint8_t lownib = (value<<4) & 0xF0;
+  write4bits((highnib)|mode);
+  delay_us(45);
+  write4bits((lownib)|mode);
+  delay_us(45);
 }
 
-void HD44780_AutoScroll(void)
+static void write4bits(uint8_t value)
 {
-	dpMode |= LCD_ENTRYSHIFTINCREMENT;
-	SendCommand(LCD_ENTRYMODESET | dpMode);
+  writeExpander(value);
+  enPulse(value);
 }
 
-void HD44780_NoAutoScroll(void)
+static void writeExpander(uint8_t data)
 {
-	dpMode &= ~LCD_ENTRYSHIFTINCREMENT;
-	SendCommand(LCD_ENTRYMODESET | dpMode);
+  data = data | displayBacklight;
+  HAL_I2C_Master_Transmit(&hi2c2, DEVICE_ADDR, (uint8_t*)&data, 1, 10);
 }
 
-void HD44780_CreateSpecialChar(uint8_t location, uint8_t charmap[])
+static void enPulse(uint8_t data)
 {
-	location &= 0x7;
-	SendCommand(LCD_SETCGRAMADDR | (location << 3));
-	for (int i=0; i<8; i++)
-	{
-		SendChar(charmap[i]);
-	}
+  writeExpander(data | ENABLE);
+  delay_us(20);
+
+  writeExpander(data & ~ENABLE);
+  delay_us(20);
 }
 
-void HD44780_PrintSpecialChar(uint8_t index)
-{
-	SendChar(index);
-}
-
-void HD44780_LoadCustomCharacter(uint8_t char_num, uint8_t *rows)
-{
-	HD44780_CreateSpecialChar(char_num, rows);
-}
-
-void HD44780_PrintStr(const char c[])
-{
-	while(*c && *c != '0') SendChar(*c++);
-}
-
-void HD44780_SetBacklight(uint8_t new_val)
-{
-	if(new_val) HD44780_Backlight();
-	else HD44780_NoBacklight();
-}
-
-void HD44780_NoBacklight(void)
-{
-	dpBacklight=LCD_NOBACKLIGHT;
-	ExpanderWrite(0);
-}
-
-void HD44780_Backlight(void)
-{
-	dpBacklight=LCD_BACKLIGHT;
-	ExpanderWrite(0);
-}
-
-static void SendCommand(uint8_t cmd)
-{
-	Send(cmd, 0);
-}
-
-static void SendChar(uint8_t ch)
-{
-	Send(ch, RS);
-}
-
-static void Send(uint8_t value, uint8_t mode)
-{
-	uint8_t highnib = value & 0xF0;
-	uint8_t lownib = (value<<4) & 0xF0;
-	Write4Bits((highnib)|mode);
-	delay_us(45);
-	Write4Bits((lownib)|mode);
-	delay_us(45);
-}
-
-static void Write4Bits(uint8_t value)
-{
-	ExpanderWrite(value);
-	PulseEnable(value);
-}
-
-static void ExpanderWrite(uint8_t _data)
-{
-	uint8_t data = _data | dpBacklight;
-	HAL_I2C_Master_Transmit(&hi2c2, DEVICE_ADDR, (uint8_t*)&data, 1, HAL_MAX_DELAY);
-}
-
-static void PulseEnable(uint8_t _data)
-{
-	ExpanderWrite(_data | ENABLE);
-	delay_us(20);
-
-	ExpanderWrite(_data & ~ENABLE);
-	delay_us(20);
-}

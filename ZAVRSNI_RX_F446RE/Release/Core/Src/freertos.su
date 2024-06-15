@@ -1,6 +1,6 @@
 ../Core/Src/freertos.c:207:6:StartCC1101	24	static
 ../Core/Src/freertos.c:244:6:StartLCD	24	static
-../Core/Src/freertos.c:275:6:StartBUZZER	32	static
+../Core/Src/freertos.c:276:6:StartBUZZER	32	static
 ../Core/Src/freertos.c:107:5:_write	12	static,ignoring_inline_asm
 ../Core/Src/freertos.c:122:13:configureTimerForRunTimeStats	0	static
 ../Core/Src/freertos.c:129:22:getRunTimeCounterValue	0	static
