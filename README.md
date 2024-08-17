@@ -1,4 +1,4 @@
-# Photograph Of The Project IRL
+# Photographs Of The Project IRL
 ## Image Showing The Project Working
 ![WhatsApp Slika 2024-07-01 u 20 56 36_93c8a0d8](https://github.com/user-attachments/assets/9b79b3a8-5e72-4399-9378-4bbb81049f3a)
 
