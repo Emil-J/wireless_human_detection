@@ -1,0 +1,41 @@
+2024/06/17 09:57:18.460 => OpenSerial: Com=9 BaudRate=256000, Success=1
+2024/06/17 09:57:18.466 => CRadarProtocolDevice::OpenCmdMode: CMDID(0x00FF) Success
+2024/06/17 09:57:18.466 => protocol version = 1, send_recv buffer size = 64
+2024/06/17 09:57:18.625 => CRadarProtocolDevice::OpenCmdMode: CMDID(0x00FF) Success
+2024/06/17 09:57:18.625 => protocol version = 1, send_recv buffer size = 64
+2024/06/17 09:57:18.631 => CRadarProtocolDevice::UpdateVersion: CMDID(0x0000) Success
+2024/06/17 09:57:18.631 => GetVersion Return: v1.4.4_32772.0
+2024/06/17 09:57:20.189 => CRadarProtocolDevice::OpenCmdMode: CMDID(0x00FF) Success
+2024/06/17 09:57:20.189 => protocol version = 1, send_recv buffer size = 64
+2024/06/17 09:57:20.343 => CRadarProtocolDevice::OpenCmdMode: CMDID(0x00FF) Success
+2024/06/17 09:57:20.343 => protocol version = 1, send_recv buffer size = 64
+2024/06/17 09:57:20.889 => CRadarProtocolDevice::SetParameter: CMDID(0x0060) Success
+2024/06/17 09:57:20.897 => CRadarProtocolDevice::SetParameter: CMDID(0x0064) Success
+2024/06/17 09:57:20.905 => CRadarProtocolDevice::SetParameter: CMDID(0x0064) Success
+2024/06/17 09:57:20.912 => CRadarProtocolDevice::SetParameter: CMDID(0x0064) Success
+2024/06/17 09:57:20.918 => CRadarProtocolDevice::SetParameter: CMDID(0x0064) Success
+2024/06/17 09:57:20.925 => CRadarProtocolDevice::SetParameter: CMDID(0x0064) Success
+2024/06/17 09:57:20.932 => CRadarProtocolDevice::SetParameter: CMDID(0x0064) Success
+2024/06/17 09:57:20.940 => CRadarProtocolDevice::SetParameter: CMDID(0x0064) Success
+2024/06/17 09:57:20.947 => CRadarProtocolDevice::SetParameter: CMDID(0x0064) Success
+2024/06/17 09:57:20.960 => CRadarProtocolDevice::SetParameter: CMDID(0x0064) Success
+2024/06/17 09:57:20.966 => CRadarProtocolDevice::CloseCmdMode: CMDID(0x00FE) Success
+2024/06/17 09:57:27.316 => CRadarProtocolDevice::OpenCmdMode: CMDID(0x00FF) failed with:A002
+2024/06/17 09:57:27.317 => CRadarProtocolDevice::OpenCmdMode: CMDID(0x00FF) failed with:A002
+2024/06/17 09:57:27.473 => CRadarProtocolDevice::OpenCmdMode: CMDID(0x00FF) Success
+2024/06/17 09:57:27.474 => protocol version = 1, send_recv buffer size = 64
+2024/06/17 09:57:28.022 => CRadarProtocolDevice::SetParameter: CMDID(0x0060) Success
+2024/06/17 09:57:28.029 => CRadarProtocolDevice::SetParameter: CMDID(0x0064) Success
+2024/06/17 09:57:28.037 => CRadarProtocolDevice::SetParameter: CMDID(0x0064) Success
+2024/06/17 09:57:28.044 => CRadarProtocolDevice::SetParameter: CMDID(0x0064) Success
+2024/06/17 09:57:28.050 => CRadarProtocolDevice::SetParameter: CMDID(0x0064) Success
+2024/06/17 09:57:28.057 => CRadarProtocolDevice::SetParameter: CMDID(0x0064) Success
+2024/06/17 09:57:28.064 => CRadarProtocolDevice::SetParameter: CMDID(0x0064) Success
+2024/06/17 09:57:28.073 => CRadarProtocolDevice::SetParameter: CMDID(0x0064) Success
+2024/06/17 09:57:28.080 => CRadarProtocolDevice::SetParameter: CMDID(0x0064) Success
+2024/06/17 09:57:28.087 => CRadarProtocolDevice::SetParameter: CMDID(0x0064) Success
+2024/06/17 09:57:28.093 => CRadarProtocolDevice::CloseCmdMode: CMDID(0x00FE) Success
+2024/06/17 09:57:31.895 => Cancel Read Data
+2024/06/17 09:57:40.400 => Cancel Read Data
+2024/06/17 09:57:40.403 => Cancel Read Data
+2024/06/17 09:57:40.403 => Cancel Read Data
