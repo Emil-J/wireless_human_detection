@@ -14,6 +14,8 @@ RTOS v2 interface in the STM32Cube integrated development environment, while als
 exploring the CC1101 module, which functions as a transceiver communication module 
 operating on the radio frequency of 433 MHz.
 
+In short, the project is about an intruder alarm on the entrance door of a house. This is made with two separate Nucleo boards, one has a function to be a data receiver and a feedback device while the other has a function to be a human detector and data transmitter. The intruder is detected via the LD2410B 24GHz radar module and this data is processed thru a CMSIS v2 RTOS transmitter program on the Nucleo-L476RG board. This data is then forwarded to the very reliable Texas Instruments CC1101 Transceiver chip which then sends the data over the air across the 433MHz radiofrequency to the Nucleo-F446RE board. This signal then is detected by the receiving module via the CC1101 chip and the data is processed in another CMSIS v2 RTOS receiving program which then runs the feedback alerts if there is a person detected.
+
 # Photograph Of The Wiring
 
 # List Of All The Used Components
@@ -34,5 +36,7 @@ operating on the radio frequency of 433 MHz.
 * [SmartRF Studio 7 Tool](https://www.ti.com/tool/download/SMARTRF-STUDIO-7/2.31.0)
 * [LD2410 Tool](https://github.com/Emil-J/wireless_human_detection/tree/main/LD2410B%20Tools%20%26%20Documents/LD2410%20Tool)
 # Overview Of The Files
-ZAVRSNI_RX_F446RE -> This file contains the RX side of the project for STM32CUBEIDE.
-ZAVRSNI_TX_L476RG -> This file contains the TX side of the project for STM32CUBEIDE.
+* ZAVRSNI_RX_F446RE -> This file contains the RX side of the project for STM32CUBEIDE.
+* ZAVRSNI_TX_L476RG -> This file contains the TX side of the project for STM32CUBEIDE.
+* CC1101 Tools & Documents -> This file contains all the tools & documents for the CC1101 used that made this project possible.
+* LD2410B Tools & Documents -> This file contains all the tools & documents for the LD2410B used that made this project possible.
