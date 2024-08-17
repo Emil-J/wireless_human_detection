@@ -18,21 +18,21 @@ operating on the radio frequency of 433 MHz.
 
 # List Of All The Used Components
 ## Hardware
-* Nucleo-F446RE Board
-* Nucleo-L476RG Board
-* CC1101 Transceiver
+* [Nucleo-F446RE Board](https://www.st.com/en/evaluation-tools/nucleo-f446re.html)
+* [Nucleo-L476RG Board](https://www.st.com/en/evaluation-tools/nucleo-l476rg.html)
+* [CC1101 Transceiver](https://www.ti.com/product/CC1101?keyMatch=CC1101&tisearch=search-everything&usecase=GPN-ALT&bm-verify=AAQAAAAJ_____z_JZDjlRNkQf0g6q4npV2w8d8BiAECWO0JyIodHEgjOSV90qO7CPvih_sx8H5Xi7qSPs5BnjfTnKsCtXrI39b1obV-YYNCvUpR60A3YU1Yl4pQ8UvShZvoKL4jhoeFrQk7rgdsREO0qrzl8Fe5DqJcSGsh7O2QwkmafS3I9XvAcWQd9CyHZGWXDCJKs2MP-WMQ-SZeythrjvuBssvxYVhK__0zWtyyEB1ciQMf_a6LIg4pkYjajAUe9OR4L97nmWlnJaoo3KZzPaKhF4B4r-Wr8M2xAyWBQLZbB0HhP5mJxTRvv94HIRAcm9BDbk6Hh72nBrMtj9yrJbg2JKAGnDND_oCma78IIX10uXuirOZ_6ytI)
 * HLK-LD2410B Human Radar Detection Module
 * LCD1602_I2C Display
 ## Software
-* STM32CUBEMX Program
-* STM32CUBEIDE Program
-* CMSIS-V2 RTOS
+* [STM32CUBEMX Program](https://www.st.com/en/development-tools/stm32cubemx.html)
+* [STM32CUBEIDE Program](https://www.st.com/en/development-tools/stm32cubeide.html)
+* [CMSIS-V2 RTOS](https://arm-software.github.io/CMSIS_5/develop/RTOS2/html/index.html)
 ## Tools
 ### Hardware Tool
 * Serial USB-TTL Device
 ### Software Tool
-* SmartRF Studio 7 Tool
-* [LD2410 Tool]()
+* [SmartRF Studio 7 Tool](https://www.ti.com/tool/download/SMARTRF-STUDIO-7/2.31.0)
+* [LD2410 Tool](https://github.com/Emil-J/wireless_human_detection/tree/main/LD2410B%20Tools%20%26%20Documents/LD2410%20Tool)
 # Overview Of The Files
 ZAVRSNI_RX_F446RE -> This file contains the RX side of the project for STM32CUBEIDE.
 ZAVRSNI_TX_L476RG -> This file contains the TX side of the project for STM32CUBEIDE.
