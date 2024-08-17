@@ -25,6 +25,7 @@ In short, the project is about an intruder alarm on the entrance door of a house
 * [CC1101 Transceiver](https://www.ti.com/product/CC1101?keyMatch=CC1101&tisearch=search-everything&usecase=GPN-ALT&bm-verify=AAQAAAAJ_____z_JZDjlRNkQf0g6q4npV2w8d8BiAECWO0JyIodHEgjOSV90qO7CPvih_sx8H5Xi7qSPs5BnjfTnKsCtXrI39b1obV-YYNCvUpR60A3YU1Yl4pQ8UvShZvoKL4jhoeFrQk7rgdsREO0qrzl8Fe5DqJcSGsh7O2QwkmafS3I9XvAcWQd9CyHZGWXDCJKs2MP-WMQ-SZeythrjvuBssvxYVhK__0zWtyyEB1ciQMf_a6LIg4pkYjajAUe9OR4L97nmWlnJaoo3KZzPaKhF4B4r-Wr8M2xAyWBQLZbB0HhP5mJxTRvv94HIRAcm9BDbk6Hh72nBrMtj9yrJbg2JKAGnDND_oCma78IIX10uXuirOZ_6ytI)
 * [HLK-LD2410B Human Radar Detection Module](https://www.hlktech.net/index.php?id=1094)
 * [LCD1602_I2C Display](https://sparkfun.com/datasheets/LCD/HD44780.pdf)
+* [Buzzer](https://arduinomodules.info/ky-012-active-buzzer-module/)
 ## Software
 * [STM32CUBEMX Program](https://www.st.com/en/development-tools/stm32cubemx.html)
 * [STM32CUBEIDE Program](https://www.st.com/en/development-tools/stm32cubeide.html)
