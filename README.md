@@ -29,7 +29,7 @@ operating on the radio frequency of 433 MHz.
 * CMSIS-V2 RTOS
 ## Tools
 ### Hardware Tool
-* Serial USB-TTL device
+* Serial USB-TTL Device
 ### Software Tool
 * SmartRF Studio 7 Tool
 * LD2410 Tool
